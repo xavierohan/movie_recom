@@ -1,5 +1,10 @@
 # movie_recomm
 
+## Table of Contents
+1. Getting Started
+2. Genre Bases Approach
+3. Count Vectorizer Approach
+
 ## Getting Started
 
 ### Data
@@ -9,7 +14,7 @@ A smaller dataset to test the approaches is given at [df_small.csv](https://gith
 
 ### Prerequisites
 
-What things you need to install the software and how to install them
+
 
 ```
 
