@@ -1,3 +1,16 @@
+# movie_recomm
+
 ## Getting Started
 
-The Dataset used can be found here - https://www.kaggle.com/rounakbanik/the-movies-dataset
+### Data
+The Full Dataset used can be found here - https://www.kaggle.com/rounakbanik/the-movies-dataset
+
+A smaller dataset to test the approaches is given at 
+
+### Prerequisites
+
+What things you need to install the software and how to install them
+
+```
+
+```
