@@ -1,2 +1,3 @@
-# movie_recom
-Various Movie Recommendation Approaches
+## Getting Started
+
+The Dataset used can be found here - https://www.kaggle.com/rounakbanik/the-movies-dataset
