@@ -2,7 +2,7 @@
 
 ## Table of Contents
 1. Getting Started
-2. Genre Bases Approach
+2. Genre Based Approach
 3. Count Vectorizer Approach
 
 ## Getting Started
@@ -18,4 +18,20 @@ A smaller dataset to test the approaches is given at [df_small.csv](https://gith
 
 ```
 
+```
+## Genre Based Approach
+Recommends top n movies based on users genre specification.
+
+To run from your terminal
+
+```
+python3 genre_based_recomm.py - h
+```
+
+## Count Vectorizer Approach
+
+To run from your terminal
+
+```
+python3 count_vec_recomm.py -h
 ```
