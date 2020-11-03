@@ -1,10 +1,10 @@
-from RecommNet import d, df_movies
+from RecommNet.RecommNet import d, df_movies
 import numpy as np
 from sklearn.metrics import mean_squared_error
 from sklearn.metrics import mean_absolute_error
 from sklearn.metrics import r2_score
-from embedding_search import suggest_movies_knn, suggest_users_knn, get_knn, movies_index
-from train_RecommNet import model
+from RecommNet.embedding_search import suggest_movies_knn, suggest_users_knn, get_knn, movies_index
+from RecommNet.train_RecommNet import model
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL']='2'
 from clean import df2

@@ -1,4 +1,4 @@
-from main import metadata
+from clean import metadata
 import argparse
 
 parser = argparse.ArgumentParser(description='Recommend Movies based on count vectors ')

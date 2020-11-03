@@ -1,6 +1,6 @@
 # ONLY WORKS FOR column = ALL FOR NOW
 
-from main import df2
+from clean import df2
 import pandas as pd
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
