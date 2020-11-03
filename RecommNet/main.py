@@ -1,14 +1,11 @@
-from RecommNet.RecommNet import d, df_movies
+from RecommNet import d, df_movies
 import numpy as np
 from sklearn.metrics import mean_squared_error
 from sklearn.metrics import mean_absolute_error
-from sklearn.metrics import r2_score
-from RecommNet.embedding_search import suggest_movies_knn, suggest_users_knn, get_knn, movies_index
-from RecommNet.train_RecommNet import model
-import os
-os.environ['TF_CPP_MIN_LOG_LEVEL']='2'
-from clean import df2
-import nmslib
+
+from embedding_search import suggest_movies_knn, suggest_users_knn, get_knn, movies_index
+from train_RecommNet import model
+
 import argparse
 
 parser = argparse.ArgumentParser(description='Recommend Movies ')
@@ -16,8 +13,8 @@ parser.add_argument('-m', '--movie_id', type=int, required=False, help='Enter th
 parser.add_argument('-u', '--user_id', type=int, required=False, help='Enter the user id')
 parser.add_argument('-p', '--performance', type=int, required=False, help='1: to get model performance')
 
-args = vars(parser.parse_args())
 
+args = vars(parser.parse_args())
 
 if args['performance'] == 1:
     X = d[['userId', 'id', 'genre1', 'genre2', 'rating', 'key1', 'key2']]
@@ -30,13 +27,13 @@ if args['performance'] == 1:
     MSE = mean_squared_error(y_true=X.rating.values, y_pred=X.pred.values)
     MAE = mean_absolute_error(y_true=X.rating.values, y_pred=X.pred.values)
 
-    print("MEAN SQUARED ERROR : ", MSE, "\nROOT MEAN SQUARED ERROR : ", MSE ** (0.5), "\nMEAN ABSOLUTE ERROR : ", MAE)
+    print(" MEAN SQUARED ERROR : ", MSE, "\nROOT MEAN SQUARED ERROR : ", MSE ** (0.5), "\nMEAN ABSOLUTE ERROR : ", MAE)
 
 # Recommendations for Star Wars
 #movie_id = 188  # 188 --> Star Wars
 movie_id = args['movie_id']
 print("\n")
-print("Input Movie is : ",d[d['id'] == movie_id].head(1)['title'].item(), "\n")
+print(" Input Movie is : ",d[d['id'] == movie_id].head(1)['title'].item(), "\n")
 j = suggest_movies_knn(movie_id, 8)
 print(" Recommended Movies based on Movie Embedding are : \n", list(np.unique(d[d['id'].isin(j)]['title'])), "\n")
 
@@ -63,4 +60,4 @@ avg_w = avg_w / len(user_profile)
 
 # Recommending movies based on average movie embedding
 j = get_knn(movies_index, avg_w, 5)[0]
-print(" Recommended Movies based on User Profile are : \n", list(np.unique(d[d['id'].isin(j)]['title'])), "/n")
+print(" Recommended Movies based on User Profile are : \n", list(np.unique(d[d['id'].isin(j)]['title'])))

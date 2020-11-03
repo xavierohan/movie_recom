@@ -1,9 +1,10 @@
 import pandas as pd
 import numpy as np
 
-df_movies = pd.read_csv('the-movies-dataset/df_large.csv')
-df_ratings = pd.read_csv('the-movies-dataset/d_large.csv')
-ratings = pd.read_csv('the-movies-dataset/ratings_small.csv')
+pathname = '/Users/xavierthomas/Desktop/the-movies-dataset'
+df_movies = pd.read_csv(pathname + '/' + 'df_large.csv')
+df_ratings = pd.read_csv(pathname + '/' + 'd_large.csv')
+ratings = pd.read_csv(pathname + '/' + 'ratings_small.csv')
 
 del df_movies['overview']
 # df_movies.head()

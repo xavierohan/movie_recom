@@ -1,6 +1,6 @@
 import tensorflow as tf
 import keras
-from RecommNet.model_RecommNet import model
+from model_RecommNet import model
 from RecommNet import d
 
 model.compile(keras.optimizers.Adam(learning_rate=0.01),

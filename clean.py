@@ -9,11 +9,12 @@ from pandas.core.common import SettingWithCopyWarning
 warnings.simplefilter(action="ignore", category=SettingWithCopyWarning)
 
 # Import Datasets
-ratings = pd.read_csv('the-movies-dataset/ratings.csv', low_memory=False)
-credits = pd.read_csv('the-movies-dataset/credits.csv', low_memory=False)
-keywords = pd.read_csv('the-movies-dataset/keywords.csv', low_memory=False)
-links = pd.read_csv('the-movies-dataset/links.csv', low_memory=False)
-metadata = pd.read_csv('the-movies-dataset/movies_metadata.csv', low_memory=False)
+pathname = '/Users/xavierthomas/Desktop/the-movies-dataset'
+ratings = pd.read_csv(pathname + '/' + 'ratings_small.csv', low_memory=False)
+credits = pd.read_csv(pathname + '/' + 'credits.csv', low_memory=False)
+keywords = pd.read_csv(pathname + '/' + 'keywords.csv', low_memory=False)
+links = pd.read_csv(pathname + '/' + 'links.csv', low_memory=False)
+metadata = pd.read_csv(pathname + '/' + 'movies_metadata.csv', low_memory=False)
 
 n_actors = 6
 
@@ -37,7 +38,6 @@ df = metadata[['title', 'genres', 'id', 'popularity',
 df_rating = df.sort_values('rating', ascending=False)  # sort titles according to ratings
 
 df = df_rating.head(800)  # To get the best 800 movies according to rating
-
 
 # converting 'id' to type int
 keywords['id'] = keywords['id'].astype('int')
@@ -98,8 +98,7 @@ df['director'] = df["director"].str.replace(" ", "")
 df['director'] = df['director'].str.lower()
 df['director'] = df['director'].apply(lambda x: [x])
 
-
-#dropping NA values
+# dropping NA values
 df2 = df.dropna(axis=0, subset=['title'])
 
-#print(df2.head())
+# print(df2.head())
