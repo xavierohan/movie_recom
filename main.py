@@ -1,105 +1,66 @@
-#!/Library/Frameworks/Python.framework/Versions/3.8/bin/python3
-
-import pandas as pd
+from RecommNet import d, df_movies
 import numpy as np
+from sklearn.metrics import mean_squared_error
+from sklearn.metrics import mean_absolute_error
+from sklearn.metrics import r2_score
+from embedding_search import suggest_movies_knn, suggest_users_knn, get_knn, movies_index
+from train_RecommNet import model
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL']='2'
+from clean import df2
+import nmslib
+import argparse
 
-import warnings
-from pandas.core.common import SettingWithCopyWarning
+parser = argparse.ArgumentParser(description='Recommend Movies ')
+parser.add_argument('-m', '--movie_id', type=int, required=False, help='Enter the movie id')
+parser.add_argument('-u', '--user_id', type=int, required=False, help='Enter the user id')
+parser.add_argument('-p', '--performance', type=int, required=False, help='1: to get model performance')
 
-warnings.simplefilter(action="ignore", category=SettingWithCopyWarning)
-
-# Import Datasets
-ratings = pd.read_csv('the-movies-dataset/ratings.csv', low_memory=False)
-credits = pd.read_csv('the-movies-dataset/credits.csv', low_memory=False)
-keywords = pd.read_csv('the-movies-dataset/keywords.csv', low_memory=False)
-links = pd.read_csv('the-movies-dataset/links.csv', low_memory=False)
-metadata = pd.read_csv('the-movies-dataset/movies_metadata.csv', low_memory=False)
-
-n_actors = 6
-
-# To calculate rating
-m = 434
-C = 5.61
-
-
-def assign_rating(x):
-    v = metadata[metadata['title'] == x]['vote_count']
-    R = metadata[metadata['title'] == x]['vote_average']
-    rating = v * R / (v + m) + m * C / (m + v)
-    return rating
+args = vars(parser.parse_args())
 
 
-metadata['rating'] = assign_rating(metadata['title'])  # calculating ratings for every title
+if args['performance'] == 1:
+    X = d[['userId', 'id', 'genre1', 'genre2', 'rating', 'key1', 'key2']]
+    y = d['rating']
 
-df = metadata[['title', 'genres', 'id', 'popularity',
-               'rating']]  # Only taking Columns that contribute most to the content of the Movie
+    X['pred'] = model.predict([[X['userId']], [X['id']], [X['genre1']], [X['genre2']], [X['key1']], [X['key2']]])
 
-df_rating = df.sort_values('rating', ascending=False)  # sort titles according to ratings
+    X['diff'] = abs(X['rating'] - X['pred'])
 
-df = df_rating.head(800)  # To get the best 800 movies according to rating
+    MSE = mean_squared_error(y_true=X.rating.values, y_pred=X.pred.values)
+    MAE = mean_absolute_error(y_true=X.rating.values, y_pred=X.pred.values)
 
+    print("MEAN SQUARED ERROR : ", MSE, "\nROOT MEAN SQUARED ERROR : ", MSE ** (0.5), "\nMEAN ABSOLUTE ERROR : ", MAE)
 
-# converting 'id' to type int
-keywords['id'] = keywords['id'].astype('int')
-credits['id'] = credits['id'].astype('int')
-df['id'] = df['id'].astype('int')
+# Recommendations for Star Wars
+#movie_id = 188  # 188 --> Star Wars
+movie_id = args['movie_id']
+print("\n")
+print("Input Movie is : ",d[d['id'] == movie_id].head(1)['title'].item(), "\n")
+j = suggest_movies_knn(movie_id, 8)
+print(" Recommended Movies based on Movie Embedding are : \n", list(np.unique(d[d['id'].isin(j)]['title'])), "\n")
 
-# merging credits and keywords to dataframe df
-df = df.merge(credits, on='id')
-df = df.merge(keywords, on='id')
+# Recommend similar profiles
+#user_id = 288
+user_id = args['user_id']
+j = suggest_users_knn(user_id, 5)
+print(" Recommended Users based on user Embedding are : \n", list(np.unique(d[d['userId'].isin(j)]['userId']))[:10], "\n")
 
-# cleaning up genres,keywords,actors columns
-from ast import literal_eval
+# Recommendations Based on User Profile #288
+#user_id = 288
+user_profile = d[d['userId'] == user_id]
+user_profile = user_profile[['userId', 'id', 'title', 'genre1', 'genre2', 'key1', 'key2', 'rating', 'genres']]
+user_profile = user_profile[user_profile['rating'] > 4]
+user_profile  # User Profile of user 288
 
-df['genres'] = df['genres'].fillna('[]').apply(literal_eval).apply(
-    lambda x: [i['name'] for i in x] if isinstance(x, list) else [])
-df['keywords'] = df['keywords'].fillna('[]').apply(literal_eval).apply(
-    lambda x: [i['name'] for i in x] if isinstance(x, list) else [])
-df['actors'] = df['cast'].fillna('[]').apply(literal_eval).apply(
-    lambda x: [i['name'] for i in x] if isinstance(x, list) else []).apply(
-    lambda x: x[0:n_actors])  # taking top n actors
+# Finding the average movie embedding to capture user interests.
+emb_layer = model.get_layer('movie_embedding')
+(w,) = emb_layer.get_weights()
+avg_w = 0
+for i in user_profile.id:
+    avg_w += w[i]
+avg_w = avg_w / len(user_profile)
 
-# cleaning up cast and crew columns
-df['cast'] = df['cast'].apply(literal_eval)
-df['crew'] = df['crew'].apply(literal_eval)
-
-
-# To remove documentaries from the dataframe
-
-def check_doc(x):
-    if 'Documentary' in x:
-        return True
-    else:
-        return False
-
-
-df = df.drop(df[(df.genres.apply(check_doc))].index)
-
-
-# to get the Director Name
-
-def get_director(x):
-    for i in x:
-        if i['job'] == 'Director':
-            return i['name']
-    return np.nan
-
-
-df['director'] = df['crew'].apply(get_director)
-
-del df['cast']
-del df['crew']
-
-# converting actor names to lower case and joining first and last names
-df['actors'] = df['actors'].apply(lambda x: [str.lower(i.replace(" ", "")) for i in x])
-
-# converting director name to lower case and joining first and last names
-df['director'] = df["director"].str.replace(" ", "")
-df['director'] = df['director'].str.lower()
-df['director'] = df['director'].apply(lambda x: [x])
-
-
-#dropping NA values
-df2 = df.dropna(axis=0, subset=['title'])
-
-#print(df2.head())
+# Recommending movies based on average movie embedding
+j = get_knn(movies_index, avg_w, 5)[0]
+print(" Recommended Movies based on User Profile are : \n", list(np.unique(d[d['id'].isin(j)]['title'])), "/n")
