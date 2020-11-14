@@ -28,7 +28,7 @@ To run from your terminal
 ```
 python3 count_vec_recomm.py -h
 ```
-## Count Vectorizer Approach
+## Content Based Personalised Recommendation System using Entity Embeddings (RecommNet)
 
 To run from your terminal
 
