@@ -12,13 +12,6 @@ The Full Dataset used can be found here - https://www.kaggle.com/rounakbanik/the
 
 A smaller dataset to test the approaches is given at [df_small.csv](https://github.com/xavierohan/movie_recom/blob/master/df_small.csv)
 
-### Prerequisites
-
-
-
-```
-
-```
 ## Genre Based Approach
 Recommends top n movies based on users genre specification.
 
@@ -35,3 +28,11 @@ To run from your terminal
 ```
 python3 count_vec_recomm.py -h
 ```
+## Count Vectorizer Approach
+
+To run from your terminal
+
+```
+python3 RecommNet.main.py -h
+```
+Refer Report.pdf to view the working of RecommNet
