@@ -32,7 +32,8 @@ python3 count_vec_recomm.py -h
 
 To run from your terminal
 
+Run the following inside RecommNet
 ```
-python3 RecommNet.main.py -h
+python3 main.py -h
 ```
 Refer Report.pdf to view the working of RecommNet
