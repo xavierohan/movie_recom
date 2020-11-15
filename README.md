@@ -4,6 +4,7 @@
 1. Getting Started
 2. Genre Based Approach
 3. Count Vectorizer Approach
+4. Content Based Personalised Recommendation System using Entity Embeddings (RecommNet)
 
 ## Getting Started
 
